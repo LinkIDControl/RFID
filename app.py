@@ -9,7 +9,7 @@ def init_db():
     conn = sqlite3.connect('asistencia.db')
     cursor = conn.cursor()
     
-    # Tabla de usuarios (estudiantes y maestros)
+    # Tabla de usuarios, ademas ejecuta query
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS usuarios (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
