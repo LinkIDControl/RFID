@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Asistencia RFID · Colegio</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+:root{
+  --font:"Nunito","Quicksand","Trebuchet MS",system-ui,sans-serif;
+  --gold:#E6BC57;--goldsoft:#FFF4D6;
+  --bg:#FFFFFF;--paper:#FFFFFF;--ink:#454A5E;--muted:#858BA3;--line:#EEF0F8;
+  --mint:#DFF6EA;--mintink:#2F8060;--peach:#FFE9DC;--peachink:#B8653A;--lav:#EFEBFC;--lavink:#6A5BBD;--rose:#FDE6EC;--roseink:#B8456A;--sky:#E4F1FD;--skyink:#3F73B5;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--font)}
+h1,h2,h3{font-family:var(--font);font-weight:800;margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+header{background:linear-gradient(135deg,#E4F1FD,#EFEBFC 55%,#FFF4D6);color:var(--ink);border-bottom:4px solid var(--gold)}
+.top{display:flex;align-items:center;gap:14px;padding:16px 0 10px}
+.crest{width:44px;height:44px;border-radius:50%;background:var(--gold);color:#fff;display:grid;place-items:center;font:800 21px var(--font)}
+.top h1{font-size:20px}.top small{color:var(--muted);display:block;font-size:13px}
+.clock{margin-left:auto;text-align:right;font:800 22px var(--font);color:var(--ink)}
+.clock small{display:block;font:400 12px var(--font);color:var(--muted)}
+nav{display:flex;gap:4px;overflow-x:auto}
+nav button{background:none;border:0;color:var(--muted);padding:11px 18px;font:600 15px inherit;font-family:inherit;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+nav button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--gold)}
+nav button:hover{color:var(--ink)}
+button:focus-visible,input:focus,select:focus{outline:3px solid var(--gold);outline-offset:1px}
+main{max-width:1080px;margin:0 auto;padding:26px 20px 50px}
+section[hidden]{display:none}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:22px}
+.grid2{display:grid;grid-template-columns:1.15fr 1fr;gap:22px;align-items:start}
+.sub{color:var(--muted);font-size:14px;margin:4px 0 14px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+.stat{border-radius:16px;padding:12px 14px}.stat b{font:800 26px var(--font);display:block}.stat span{font-size:13px}
+.s-tot{background:var(--sky);color:var(--skyink)}.s-p{background:var(--mint);color:var(--mintink)}.s-t{background:var(--peach);color:var(--peachink)}.s-n{background:var(--lav);color:var(--lavink)}
+/* lector */
+.reader{border:2px dashed var(--gold);background:var(--goldsoft);border-radius:20px;padding:16px;margin-bottom:16px}
+.reader label{font-weight:600;font-size:14px;display:block;margin-bottom:6px}
+.reader input{width:100%;padding:12px;border:1.5px solid var(--gold);border-radius:14px;background:var(--paper);color:var(--ink);font:inherit}
+.pulse{display:inline-block;width:10px;height:10px;border-radius:50%;background:#2FA36B;margin-right:6px;animation:p 1.6s infinite}
+@keyframes p{50%{opacity:.3}}@media(prefers-reduced-motion:reduce){.pulse{animation:none}}
+.welcome{min-height:250px;display:grid;place-items:center;text-align:center;border-radius:20px;padding:22px;background:var(--lav);color:var(--lavink)}
+.welcome.ok{background:var(--mint);color:var(--mintink)}.welcome.late{background:var(--peach);color:var(--peachink)}.welcome.bad{background:var(--rose);color:var(--roseink)}
+.welcome .avatar{width:110px;height:110px;font-size:38px;margin:0 auto 10px}
+.welcome h2{font-size:26px;color:var(--ink)}.welcome .big{font-weight:700;font-size:18px;margin-top:6px}
+.avatar{width:50px;height:50px;border-radius:50%;background:var(--sky);color:var(--skyink);border:2.5px solid var(--gold);display:grid;place-items:center;font-weight:700;overflow:hidden;flex:none}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.log{display:grid;gap:8px;margin-top:6px}
+.item{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:16px;border-left:5px solid var(--line)}
+.item.p{border-left-color:#4DB88A}.item.t{border-left-color:#E89A66}.item.n{border-left-color:#B9B1E6}
+.item .nm{font-weight:600}.item .mt{font-size:13px;color:var(--muted)}.item .end{margin-left:auto;text-align:right;font-size:13px}
+.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700}
+.b-p{background:var(--mint);color:var(--mintink)}.b-t{background:var(--peach);color:var(--peachink)}.b-n{background:var(--lav);color:var(--lavink)}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center}.bar h2{margin-right:auto}
+input[type=text],select{padding:10px 12px;border:1.5px solid var(--line);border-radius:14px;background:var(--paper);color:var(--ink);font:inherit;width:100%}
+.bar input,.bar select{width:auto;min-width:150px}
+.btn{font-weight:700;border:0;border-radius:14px;padding:11px 16px;font:600 15px inherit;font-family:inherit;cursor:pointer}
+.gold{background:var(--gold);color:#4A3A0E}.gold:hover{filter:brightness(1.07)}.soft{background:var(--goldsoft);color:var(--ink)}
+.mini{border:1.5px solid var(--line);background:var(--paper);color:var(--muted);border-radius:8px;padding:4px 9px;font-size:12px;cursor:pointer;margin-left:4px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.person{border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;gap:14px;align-items:center}
+.person .avatar{width:62px;height:62px}
+.tabs2{display:flex;gap:8px;margin-bottom:16px}
+.tabs2 button{border:1.5px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:8px 16px;font:600 14px inherit;font-family:inherit;cursor:pointer}
+.tabs2 button[aria-pressed=true]{background:var(--gold);color:#4A3A0E;border-color:var(--gold)}
+form .f{margin-bottom:14px}form label{display:block;font-weight:600;font-size:14px;margin-bottom:5px}
+.photo{display:flex;align-items:center;gap:14px;margin-bottom:16px}.photo .avatar{width:90px;height:90px;font-size:30px;background:var(--lav);color:var(--lavink)}
+.err{color:var(--roseink);font-size:13px;min-height:18px}.ok{color:var(--mintink);font-size:14px;font-weight:600}
+.empty{padding:30px;text-align:center;border-radius:16px;background:var(--lav);color:var(--lavink)}
+@media(max-width:820px){.grid2{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.clock{display:none}}
+</style>
+</head>
+<body>
+<header>
+ <div class="wrap">
+  <div class="top">
+   <div class="crest" aria-hidden="true">C</div>
+   <div><h1>Control de asistencia</h1><small>Colegio · Lector de tarjetas RFID</small></div>
+   <div class="clock" id="reloj">--:--<small id="fecha"></small></div>
+  </div>
+  <nav role="tablist" aria-label="Secciones">
+   <button role="tab" data-t="asistencia" aria-selected="true">Asistencia en vivo</button>
+   <button role="tab" data-t="estudiantes" aria-selected="false">Estudiantes</button>
+   <button role="tab" data-t="maestros" aria-selected="false">Maestros</button>
+   <button role="tab" data-t="nuevo" aria-selected="false">Añadir usuario</button>
+  </nav>
+ </div>
+</header>
+
+<main>
+ <!-- asistencia -->
+ <section id="asistencia">
+  <div class="stats">
+   <div class="stat s-tot"><b id="sTot">0</b><span>Personas registradas</span></div>
+   <div class="stat s-p"><b id="sP">0</b><span>Presentes</span></div>
+   <div class="stat s-t"><b id="sT">0</b><span>Llegadas tarde</span></div>
+   <div class="stat s-n"><b id="sN">0</b><span>Sin registrar hoy</span></div>
+  </div>
+  <div class="grid2">
+   <div>
+    <div class="reader">
+     <label for="scan"><span class="pulse"></span>Lector listo: pasa la tarjeta por el sensor</label>
+     <input type="text" id="scan" placeholder="Código de la tarjeta (el lector lo escribe solo)" autocomplete="off">
+    </div>
+    <div class="welcome" id="bienvenida"><div><h2>Esperando tarjeta…</h2><p>Cuando pases una tarjeta, la persona aparecerá aquí con su hora de entrada.</p></div></div>
+   </div>
+   <div class="card">
+    <h2>Últimas lecturas</h2><p class="sub">Entradas de hoy, de la más reciente a la más antigua.</p>
+    <div class="log" id="log"></div>
+   </div>
+  </div>
+ </section>
+
+ <!-- estudiantes -->
+ <section id="estudiantes" hidden>
+  <div class="bar"><h2>Estudiantes</h2>
+   <select id="fCurso" aria-label="Filtrar por curso"><option value="">Todos los cursos</option></select>
+   <input type="text" id="qEst" placeholder="Buscar por nombre" aria-label="Buscar estudiante"></div>
+  <div class="cards" id="gEst"></div>
+ </section>
+
+ <!-- maestros -->
+ <section id="maestros" hidden>
+  <div class="bar"><h2>Maestros</h2>
+   <input type="text" id="qMae" placeholder="Buscar por nombre" aria-label="Buscar maestro"></div>
+  <div class="cards" id="gMae"></div>
+ </section>
+
+ <!-- nuevo -->
+ <section id="nuevo" hidden>
+  <div class="card" style="max-width:560px">
+   <h2>Añadir usuario</h2><p class="sub">Registra a un estudiante o maestro y vincula su tarjeta RFID.</p>
+   <div class="tabs2" role="group" aria-label="Tipo de usuario">
+    <button type="button" id="tipoE" aria-pressed="true">Estudiante</button>
+    <button type="button" id="tipoM" aria-pressed="false">Maestro</button>
+   </div>
+   <div class="photo"><div class="avatar" id="prev">👤</div>
+    <div><button type="button" class="btn soft" id="pick">Subir foto</button><input type="file" id="foto" accept="image/*" hidden></div></div>
+   <div class="f"><label for="nombre">Nombre completo</label><input type="text" id="nombre" placeholder="Ej. María Fernanda Rojas Pérez" autocomplete="off"></div>
+   <div class="f" id="fCursoN"><label for="curso">Curso</label><select id="curso"><option value="">Selecciona un curso</option></select></div>
+   <div class="f" id="fMateria" hidden><label for="materia">Asignatura</label><input type="text" id="materia" placeholder="Ej. Matemáticas" autocomplete="off"></div>
+   <div class="f"><label for="tarjeta">Código de tarjeta RFID</label><input type="text" id="tarjeta" placeholder="Pasa la tarjeta por el lector para llenarlo" autocomplete="off"></div>
+   <div class="err" id="err" role="alert"></div>
+   <button type="button" class="btn gold" id="guardar" style="width:100%">Guardar usuario</button>
+   <p class="ok" id="okMsg"></p>
+  </div>
+ </section>
+</main>
+
+<script>
+const CURSOS=["6° A","6° B","7° A","7° B","8° A","8° B","9° A","9° B","10° A","10° B","11° A","11° B"];
+let gente=[], foto="", tipo="e", log=[];
+const $=i=>document.getElementById(i);
+const ini=n=>n.split(/\s+/).slice(0,2).map(w=>w[0]).join("").toUpperCase();
+const esc=s=>s.replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+const av=(p,cls="")=>`<div class="avatar ${cls}">${p.f?`<img alt="" src="${p.f}">`:ini(p.n)}</div>`;
+
+CURSOS.forEach(c=>{$("curso").add(new Option(c,c));$("fCurso").add(new Option(c,c))});
+
+/* reloj */
+function tick(){
+ $("reloj").firstChild.nodeValue=new Date().toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"});
+ $("fecha").textContent=new Date().toLocaleDateString("es-CO",{weekday:"long",day:"numeric",month:"long"});
+}
+tick();setInterval(tick,15000);
+
+/* cargar datos desde el servidor */
+async function cargarDatos(){
+ try{
+  const resU = await fetch('/api/usuarios');
+  gente = await resU.json();
+  const resM = await fetch('/api/marcaciones');
+  log = await resM.json();
+  render();
+ }catch(e){console.error("error cargando datos", e)}
+}
+
+/* navegación */
+function ir(t){
+ document.querySelectorAll("main>section").forEach(s=>s.hidden=s.id!==t);
+ document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===t));
+ if(t==="asistencia")$("scan").focus();
+}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>ir(b.dataset.t));
+
+/* lectura de tarjeta */
+async function leer(code){
+ code=code.trim(); if(!code)return;
+ const w=$("bienvenida");
+ try{
+  const res = await fetch('/api/registrar_lectura', {
+   method: 'POST',
+   headers: {'Content-Type': 'application/json'},
+   body: JSON.stringify({uid: code})
+  });
+  const data = await res.json();
+  if(data.status === 'no_registrado'){
+   w.className="welcome bad";
+   w.innerHTML=`<div><h2>Tarjeta no registrada</h2><p>El código <b>${esc(code)}</b> no pertenece a ningún usuario.</p><button class="btn gold" onclick="registrarCodigo('${esc(code)}')">Añadir usuario con esta tarjeta</button></div>`;
+   return;
+  }
+  const p = data.usuario;
+  const late = p.s==="t";
+  w.className="welcome "+(late?"late":"ok");
+  w.innerHTML=`<div>${av(p)}<h2>${esc(p.n)}</h2><p>${p.tipo==="e"?"Curso "+esc(p.c):"Maestro · "+esc(p.c)}</p>
+   <div class="big">${late?"Llegada tarde":"Asistencia registrada"} · ${p.h}</div></div>`;
+  w.querySelector(".avatar").style.cssText="width:110px;height:110px;font-size:38px;margin:0 auto 10px";
+  await cargarDatos();
+ }catch(e){console.error("error al registrar lectura", e)}
+}
+
+$("scan").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();leer(e.target.value);e.target.value=""}});
+
+let buf="",lastT=0;
+document.addEventListener("keydown",e=>{
+ const t=e.target.tagName;if(t==="INPUT"||t==="SELECT"||t==="TEXTAREA")return;
+ const n=Date.now();if(n-lastT>100)buf="";lastT=n;
+ if(e.key==="Enter"){if(buf.length>=4)leer(buf);buf=""}else if(e.key.length===1)buf+=e.key;
+});
+
+function registrarCodigo(c){ir("nuevo");$("tarjeta").value=c;$("nombre").focus()}
+
+/* renderizado */
+function stat(s){return s==="p"?'<span class="badge b-p">Presente</span>':s==="t"?'<span class="badge b-t">Tarde</span>':'<span class="badge b-n">Sin registrar</span>'}
+
+function render(){
+ $("sTot").textContent=gente.length;
+ $("sP").textContent=gente.filter(x=>x.s==="p").length;
+ $("sT").textContent=gente.filter(x=>x.s==="t").length;
+ $("sN").textContent=gente.filter(x=>x.s==="n").length;
+ 
+ const l=log.map(id=>gente.find(x=>x.id===id)).filter(Boolean).slice(0,8);
+ $("log").innerHTML=l.length?l.map(p=>`<div class="item ${p.s}">${av(p)}<div><div class="nm">${esc(p.n)}</div><div class="mt">${p.tipo==="e"?"Curso "+esc(p.c):"Maestro · "+esc(p.c)}</div></div><div class="end">${stat(p.s)}<div class="mt">${p.h}</div></div></div>`).join(""):'<div class="empty">Aún no hay lecturas hoy.</div>';
+ 
+ const fc=$("fCurso").value,qe=$("qEst").value.toLowerCase(),qm=$("qMae").value.toLowerCase();
+ card("gEst",gente.filter(x=>x.tipo==="e"&&(!fc||x.c===fc)&&x.n.toLowerCase().includes(qe)),"Curso ");
+ card("gMae",gente.filter(x=>x.tipo==="m"&&x.n.toLowerCase().includes(qm)),"");
+}
+
+function card(id,arr,pre){
+ $(id).innerHTML=arr.length?arr.map(p=>`<div class="person">${av(p)}<div style="flex:1"><div class="nm" style="font-weight:600">${esc(p.n)}</div><div class="mt" style="font-size:13px;color:var(--muted)">${pre}${esc(p.c)} · Tarjeta ${esc(p.k)}</div><div style="margin-top:6px">${stat(p.s)}${p.h?` <span class="mt" style="font-size:12px;color:var(--muted)">${p.h}</span>`:""}<button class="mini" onclick="quitar(${p.id})" aria-label="Eliminar a ${esc(p.n)}">Eliminar</button></div></div></div>`).join(""):'<div class="empty" style="grid-column:1/-1">No hay resultados.</div>';
+}
+
+async function quitar(id){
+ if(!confirm("¿Seguro que deseas eliminar a esta persona?"))return;
+ try{
+  await fetch('/api/eliminar_usuario/'+id, {method: 'DELETE'});
+  await cargarDatos();
+ }catch(e){console.error("error eliminando usuario", e)}
+}
+
+$("fCurso").onchange=$("qEst").oninput=$("qMae").oninput=render;
+
+/* añadir usuario */
+function setTipo(t){
+ tipo=t;$("tipoE").setAttribute("aria-pressed",t==="e");$("tipoM").setAttribute("aria-pressed",t==="m");
+ $("fCursoN").hidden=t==="m";$("fMateria").hidden=t==="e";
+}
+$("tipoE").onclick=()=>setTipo("e");$("tipoM").onclick=()=>setTipo("m");
+$("pick").onclick=()=>$("foto").click();
+
+$("foto").onchange=e=>{
+ const f=e.target.files[0];if(!f)return;
+ const r=new FileReader();
+ r.onload=()=>{foto=r.result;$("prev").innerHTML='<img alt="Foto" src="'+foto+'">'};
+ r.readAsDataURL(f);
+};
+
+$("tarjeta").addEventListener("keydown",e=>{if(e.key==="Enter")e.preventDefault()});
+
+$("guardar").onclick=async ()=>{
+ const n=$("nombre").value.trim(),k=$("tarjeta").value.trim(),c=tipo==="e"?$("curso").value:$("materia").value.trim();
+ $("okMsg").textContent="";
+ if(n.split(/\s+/).length<2)return $("err").textContent="Escribe el nombre completo (nombre y apellido).";
+ if(!c)return $("err").textContent=tipo==="e"?"Selecciona el curso del estudiante.":"Escribe la asignatura del maestro.";
+ if(!k)return $("err").textContent="Pasa la tarjeta por el lector para registrar su código.";
+ 
+ try{
+  const res = await fetch('/api/agregar_usuario', {
+   method: 'POST',
+   headers: {'Content-Type': 'application/json'},
+   body: JSON.stringify({tipo, nombre:n, curso:c, tarjeta:k, foto})
+  });
+  const data = await res.json();
+  if(data.status==='error'){
+   $("err").textContent = data.msg;
+   return;
+  }
+  $("err").textContent="";$("okMsg").textContent="Usuario guardado: "+n;
+  ["nombre","materia","tarjeta"].forEach(i=>$(i).value="");$("curso").value="";foto="";$("prev").textContent="👤";$("foto").value="";
+  await cargarDatos();
+ }catch(e){console.error("error guardando usuario", e)}
+};
+
+cargarDatos();
+$("scan").focus();
+</script>
+</body>
+</html>
