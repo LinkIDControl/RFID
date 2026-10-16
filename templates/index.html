@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Control de Asistencia RFID</title>
+    <style>
+        /* estilos simples y limpios */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        h1 { text-align: center; color: #1e3a8a; }
+        .container {
+            display: flex;
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            flex: 1;
+        }
+        .kiosco {
+            background: #e0f2fe;
+            border: 2px solid #0ea5e9;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #1e3a8a;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+        button:hover { background-color: #0ea5e9; }
+        .btn-eliminar {
+            background-color: #ef4444;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: auto;
+            font-size: 12px;
+        }
+        .btn-eliminar:hover { background-color: #dc2626; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        th { background-color: #f1f5f9; }
+    </style>
+</head>
+<body>
+
+    <h1>Control de Asistencia RFID</h1>
+
+    <div style="max-width: 1000px; margin: 0 auto;">
+        <!-- zona de marcacion rapida modo lector -->
+        <div class="card kiosco">
+            <h2>Punto de Marcación (Pase la Tarjeta)</h2>
+            <form action="/registrar_lectura" method="POST">
+                <input type="text" name="uid_tarjeta" placeholder="Haga clic aquí y pase la tarjeta..." autofocus required>
+                <button type="submit">Registrar Marcación Manual</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- formulario para registrar nuevos usuarios -->
+        <div class="card">
+            <h2>Registrar Usuario</h2>
+            <form action="/agregar_usuario" method="POST">
+                <label>Nombre del Usuario:</label>
+                <input type="text" name="nombre" placeholder="Ej. Juan Pérez" required>
+                
+                <label>UID de Tarjeta (Acerque la tarjeta):</label>
+                <input type="text" name="uid_tarjeta" placeholder="Ej. 0001234567" required>
+                
+                <button type="submit">Guardar Usuario</button>
+            </form>
+
+            <h3 style="margin-top: 30px;">Usuarios Registrados</h3>
+            <table>
+                <tr>
+                    <th>Nombre</th>
+                    <th>UID Tarjeta</th>
+                    <th>Acción</th>
+                </tr>
+                {% for u in usuarios %}
+                <tr>
+                    <td>{{ u[1] }}</td>
+                    <td>{{ u[2] }}</td>
+                    <td>
+                        <form action="/eliminar_usuario/{{ u[0] }}" method="POST" style="margin: 0;">
+                            <button type="submit" class="btn-eliminar" onclick="return confirm('¿Seguro que desea eliminar a este usuario?');">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <!-- historial de lecturas -->
+        <div class="card">
+            <h2>Historial de Lecturas</h2>
+            <table>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Tarjeta</th>
+                    <th>Fecha y Hora</th>
+                </tr>
+                {% for m in marcaciones %}
+                <tr>
+                    <td><strong>{{ m[1] }}</strong></td>
+                    <td>{{ m[2] }}</td>
+                    <td>{{ m[3] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>
